@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FreelancerX Lead Scraper</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>"/>
+</head>
+<body>
+
+  <!-- Animated background particles -->
+  <div class="bg-grid"></div>
+  <div class="particle-container" id="particles"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <polygon points="19,2 36,12 36,26 19,36 2,26 2,12" stroke="#D4AF37" stroke-width="2" fill="none"/>
+            <polygon points="19,8 30,14 30,24 19,30 8,24 8,14" fill="#D4AF37" opacity="0.15"/>
+            <circle cx="19" cy="19" r="5" fill="#D4AF37"/>
+            <line x1="19" y1="2" x2="19" y2="8" stroke="#D4AF37" stroke-width="2"/>
+            <line x1="19" y1="30" x2="19" y2="36" stroke="#D4AF37" stroke-width="2"/>
+            <line x1="2" y1="12" x2="8" y2="14" stroke="#D4AF37" stroke-width="2"/>
+            <line x1="30" y1="24" x2="36" y2="26" stroke="#D4AF37" stroke-width="2"/>
+            <line x1="36" y1="12" x2="30" y2="14" stroke="#D4AF37" stroke-width="2"/>
+            <line x1="8" y1="24" x2="2" y2="26" stroke="#D4AF37" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-main">FreelancerX</span>
+          <span class="logo-sub">Lead Scraper</span>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#scraper" class="nav-link active">Scraper</a>
+        <a href="#results" class="nav-link">Results</a>
+        <a href="#docs" class="nav-link">Docs</a>
+      </nav>
+      <div class="header-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText" class="status-label">Connecting...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        AI-POWERED LEAD INTELLIGENCE
+      </div>
+      <h1 class="hero-title">
+        Find Your Next<br/>
+        <span class="gold-text">1,000 Clients</span><br/>
+        Automatically
+      </h1>
+      <p class="hero-desc">
+        FreelancerX scrapes business leads from any niche, any country —<br/>
+        with emails, phones, socials & websites. Export to CSV, Excel or DOCX.
+      </p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" data-target="50000">0</span><span class="stat-label">Leads Generated</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num" data-target="120">0</span><span class="stat-label">Countries</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num" data-target="99">0</span><span class="stat-label">% Free</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <span class="t-dot red"></span>
+          <span class="t-dot yellow"></span>
+          <span class="t-dot green"></span>
+          <span class="t-title">freelankarx.terminal</span>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+          <div class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">freelankarx scrape</span></div>
+          <div class="t-line"><span class="t-key">niche:</span> <span class="t-val typing-effect">"digital marketing agencies"</span></div>
+          <div class="t-line"><span class="t-key">country:</span> <span class="t-val">"United States"</span></div>
+          <div class="t-line"><span class="t-key">limit:</span> <span class="t-val">500</span></div>
+          <div class="t-line t-blank"></div>
+          <div class="t-line"><span class="t-success">✓ Found 500 leads</span></div>
+          <div class="t-line"><span class="t-success">✓ Validated 489 emails</span></div>
+          <div class="t-line"><span class="t-success">✓ Exported: leads.xlsx</span></div>
+          <div class="t-cursor">▋</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Scraper Form -->
+  <section class="scraper-section" id="scraper">
+    <div class="section-header">
+      <div class="section-eyebrow">LEAD GENERATOR</div>
+      <h2 class="section-title">Configure Your Scrape</h2>
+      <p class="section-desc">Set your parameters and launch. FreelancerX handles the rest.</p>
+    </div>
+
+    <div class="scraper-grid">
+      <!-- Left: Form -->
+      <div class="form-card">
+        <div class="form-section-label">
+          <span class="form-step">01</span> Target
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Niche / Keyword <span class="required">*</span></label>
+          <div class="field-input-wrap">
+            <svg class="field-icon" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="#D4AF37" stroke-width="1.5"/><path d="M14 14L18 18" stroke="#D4AF37" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <input type="text" id="nicheInput" class="field-input" placeholder="e.g. plumbers, law firms, digital marketing" autocomplete="off"/>
+          </div>
+          <div class="tag-suggestions" id="nicheSuggestions">
+            <span class="tag" onclick="setNiche('Digital Marketing Agency')">Digital Marketing</span>
+            <span class="tag" onclick="setNiche('Law Firm')">Law Firms</span>
+            <span class="tag" onclick="setNiche('Real Estate Agent')">Real Estate</span>
+            <span class="tag" onclick="setNiche('Restaurant')">Restaurants</span>
+            <span class="tag" onclick="setNiche('Plumber')">Plumbers</span>
+            <span class="tag" onclick="setNiche('Dentist')">Dentists</span>
+            <span class="tag" onclick="setNiche('Gym')">Gyms</span>
+            <span class="tag" onclick="setNiche('E-commerce Store')">E-commerce</span>
+          </div>
+        </div>
+
+        <div class="form-section-label">
+          <span class="form-step">02</span> Location
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Country</label>
+            <select id="countrySelect" class="field-input field-select">
+              <option value="">All Countries</option>
+              <option value="United States">🇺🇸 United States</option>
+              <option value="United Kingdom">🇬🇧 United Kingdom</option>
+              <option value="Canada">🇨🇦 Canada</option>
+              <option value="Australia">🇦🇺 Australia</option>
+              <option value="Nigeria">🇳🇬 Nigeria</option>
+              <option value="India">🇮🇳 India</option>
+              <option value="Germany">🇩🇪 Germany</option>
+              <option value="France">🇫🇷 France</option>
+              <option value="South Africa">🇿🇦 South Africa</option>
+              <option value="Ghana">🇬🇭 Ghana</option>
+              <option value="Kenya">🇰🇪 Kenya</option>
+              <option value="UAE">🇦🇪 UAE</option>
+              <option value="Singapore">🇸🇬 Singapore</option>
+              <option value="Brazil">🇧🇷 Brazil</option>
+              <option value="Mexico">🇲🇽 Mexico</option>
+              <option value="Philippines">🇵🇭 Philippines</option>
+              <option value="Pakistan">🇵🇰 Pakistan</option>
+              <option value="New Zealand">🇳🇿 New Zealand</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">State / City <span class="optional">(optional)</span></label>
+            <input type="text" id="locationInput" class="field-input" placeholder="e.g. New York, Texas, London"/>
+          </div>
+        </div>
+
+        <div class="form-section-label">
+          <span class="form-step">03</span> Volume & Filters
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Lead Limit</label>
+            <div class="range-wrap">
+              <input type="range" id="leadLimit" class="range-slider" min="10" max="1000" value="100" step="10"/>
+              <div class="range-value-wrap">
+                <input type="number" id="leadLimitNum" class="range-num-input" value="100" min="10" max="1000"/>
+                <span class="range-unit">leads</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-checkboxes">
+          <label class="checkbox-label">
+            <input type="checkbox" id="filterEmail" checked/>
+            <span class="checkmark"></span>
+            Only with Email
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="filterWebsite"/>
+            <span class="checkmark"></span>
+            Only with Website
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="filterPhone"/>
+            <span class="checkmark"></span>
+            Only with Phone
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="filterSocial"/>
+            <span class="checkmark"></span>
+            Include Socials
+          </label>
+        </div>
+
+        <div class="form-section-label">
+          <span class="form-step">04</span> Export Format
+        </div>
+
+        <div class="export-options">
+          <label class="export-option selected" data-format="csv">
+            <input type="radio" name="exportFormat" value="csv" checked/>
+            <div class="export-icon">📊</div>
+            <span>CSV</span>
+          </label>
+          <label class="export-option" data-format="xlsx">
+            <input type="radio" name="exportFormat" value="xlsx"/>
+            <div class="export-icon">📗</div>
+            <span>Excel</span>
+          </label>
+          <label class="export-option" data-format="docx">
+            <input type="radio" name="exportFormat" value="docx"/>
+            <div class="export-icon">📄</div>
+            <span>DOCX</span>
+          </label>
+          <label class="export-option" data-format="all">
+            <input type="radio" name="exportFormat" value="all"/>
+            <div class="export-icon">📦</div>
+            <span>All</span>
+          </label>
+        </div>
+
+        <button class="launch-btn" id="launchBtn" onclick="startScrape()">
+          <span class="launch-btn-inner">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L18 10L10 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M2 10H18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Launch Scraper
+          </span>
+          <div class="btn-shimmer"></div>
+        </button>
+      </div>
+
+      <!-- Right: Live Progress -->
+      <div class="progress-card">
+        <div class="progress-header">
+          <div class="pulse-ring" id="pulseRing"></div>
+          <span id="progressStatus">Ready to Launch</span>
+        </div>
+
+        <div class="progress-ring-wrap">
+          <svg class="progress-ring" viewBox="0 0 160 160">
+            <defs>
+              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#D4AF37"/>
+                <stop offset="100%" stop-color="#F5D76E"/>
+              </linearGradient>
+            </defs>
+            <circle cx="80" cy="80" r="65" fill="none" stroke="#0d1b3e" stroke-width="14"/>
+            <circle cx="80" cy="80" r="65" fill="none" stroke="url(#ringGrad)" stroke-width="14"
+              stroke-dasharray="408" stroke-dashoffset="408" stroke-linecap="round"
+              id="progressCircle" transform="rotate(-90 80 80)"/>
+          </svg>
+          <div class="progress-center">
+            <span class="progress-pct" id="progressPct">0%</span>
+            <span class="progress-found" id="progressFound">0 found</span>
+          </div>
+        </div>
+
+        <div class="progress-steps" id="progressSteps">
+          <div class="p-step" id="step1"><span class="step-dot"></span> Initializing scraper</div>
+          <div class="p-step" id="step2"><span class="step-dot"></span> Searching directories</div>
+          <div class="p-step" id="step3"><span class="step-dot"></span> Extracting contacts</div>
+          <div class="p-step" id="step4"><span class="step-dot"></span> Validating emails</div>
+          <div class="p-step" id="step5"><span class="step-dot"></span> Removing duplicates</div>
+          <div class="p-step" id="step6"><span class="step-dot"></span> Exporting file</div>
+        </div>
+
+        <div class="live-feed" id="liveFeed">
+          <div class="feed-header">Live Feed</div>
+          <div class="feed-items" id="feedItems">
+            <div class="feed-empty">Waiting for scrape to start...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Table Section -->
+  <section class="results-section" id="results">
+    <div class="section-header">
+      <div class="section-eyebrow">EXTRACTED DATA</div>
+      <h2 class="section-title">Your Leads</h2>
+    </div>
+
+    <div class="results-toolbar">
+      <div class="results-meta">
+        <span id="totalFound">0 leads found</span>
+        <span class="results-meta-sep">·</span>
+        <span id="validEmails">0 valid emails</span>
+      </div>
+      <div class="results-actions">
+        <div class="search-box">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="5" stroke="#aaa" stroke-width="1.5"/><path d="M13 13L17 17" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input type="text" id="tableSearch" placeholder="Search leads..." oninput="filterTable(this.value)"/>
+        </div>
+        <button class="action-btn" id="downloadBtn" onclick="downloadResults()" disabled>
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 3v10M5 13l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3 17h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Download
+        </button>
+        <button class="action-btn danger" onclick="clearResults()">Clear</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="leads-table" id="leadsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Business Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Website</th>
+            <th>City</th>
+            <th>Country</th>
+            <th>Socials</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody id="leadsBody">
+          <tr class="empty-row">
+            <td colspan="9">
+              <div class="empty-state">
+                <div class="empty-icon">🎯</div>
+                <p>No leads yet. Configure your search above and launch.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Docs Section -->
+  <section class="docs-section" id="docs">
+    <div class="section-header">
+      <div class="section-eyebrow">DOCUMENTATION</div>
+      <h2 class="section-title">Setup & Deploy</h2>
+    </div>
+    <div class="docs-grid">
+      <div class="doc-card">
+        <div class="doc-num">01</div>
+        <h3>Backend URL</h3>
+        <p>Enter your deployed Render.com backend URL below. Deploy once — free forever.</p>
+        <div class="api-url-wrap">
+          <input type="text" id="apiUrlInput" class="field-input" placeholder="https://freelankarx-api.onrender.com" oninput="saveApiUrl(this.value)"/>
+          <button class="action-btn small" onclick="testConnection()">Test</button>
+        </div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-num">02</div>
+        <h3>Free Stack</h3>
+        <p>This entire tool runs free using:</p>
+        <ul class="doc-list">
+          <li>GitHub Pages — frontend hosting</li>
+          <li>Render.com — Python backend (free tier)</li>
+          <li>No database needed — export-only</li>
+        </ul>
+      </div>
+      <div class="doc-card">
+        <div class="doc-num">03</div>
+        <h3>Data Sources</h3>
+        <ul class="doc-list">
+          <li>Google search scraping</li>
+          <li>Yellow Pages / Yelp directories</li>
+          <li>LinkedIn (public profiles)</li>
+          <li>Bing / DuckDuckGo</li>
+          <li>Business directory crawling</li>
+        </ul>
+      </div>
+      <div class="doc-card">
+        <div class="doc-num">04</div>
+        <h3>Limits & Tips</h3>
+        <ul class="doc-list">
+          <li>Up to 1,000 leads per scrape</li>
+          <li>Use specific niches for better results</li>
+          <li>Add city/state to narrow results</li>
+          <li>Render free tier may spin up slowly (30s)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">FreelancerX <span class="gold-text">Lead Scraper</span></div>
+      <p class="footer-tag">Built for freelancers. Powered by Python. Deployed for free.</p>
+      <div class="footer-links">
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="https://render.com" target="_blank">Render</a>
+        <a href="#docs">Docs</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
