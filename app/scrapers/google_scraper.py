@@ -1,14 +1,14 @@
 """
 Google Search Scraper — scrapes business leads from Google search results.
-Uses rotating User-Agents and async requests. No API key required.
+Uses rotating User-Agents and requests. No API key required.
 """
 
-import asyncio
-import aiohttp
 import re
 import logging
+import time
+import requests
 from bs4 import BeautifulSoup
-from urllib.parse import quote_plus, urljoin
+from urllib.parse import quote_plus
 from app.utils.contact_extractor import extract_contacts
 
 logger = logging.getLogger("freelankarx.google")
@@ -41,29 +41,27 @@ class GoogleScraper:
             f'list of {niche} businesses {country} {location}',
         ]
 
-        connector = aiohttp.TCPConnector(limit=5, ssl=False)
-        timeout = aiohttp.ClientTimeout(total=20)
+        session = requests.Session()
+        for q_idx, query in enumerate(queries):
+            if len(leads) >= limit:
+                break
+            try:
+                urls = self._search_google(session, query, q_idx)
+                # Visit each result and extract contacts
+                for url in urls[:8]:
+                    if len(leads) >= limit:
+                        break
+                    r = self._scrape_page(session, url, niche, country, location, include_social)
+                    if isinstance(r, dict) and r.get("business_name"):
+                        leads.append(r)
+                time.sleep(1.5)  # polite delay
+            except Exception as e:
+                logger.debug(f"Google query {q_idx} failed: {e}")
 
-        async with aiohttp.ClientSession(connector=connector, timeout=timeout) as session:
-            for q_idx, query in enumerate(queries):
-                if len(leads) >= limit:
-                    break
-                try:
-                    urls = await self._search_google(session, query, q_idx)
-                    # Visit each result and extract contacts
-                    tasks = [self._scrape_page(session, url, niche, country, location, include_social)
-                             for url in urls[:8]]
-                    results = await asyncio.gather(*tasks, return_exceptions=True)
-                    for r in results:
-                        if isinstance(r, dict) and r.get("business_name"):
-                            leads.append(r)
-                    await asyncio.sleep(1.5)  # polite delay
-                except Exception as e:
-                    logger.debug(f"Google query {q_idx} failed: {e}")
-
+        session.close()
         return leads[:limit]
 
-    async def _search_google(self, session, query: str, offset: int = 0) -> list:
+    def _search_google(self, session, query: str, offset: int = 0) -> list:
         """Fetch Google search result URLs."""
         import random
         url = f"https://www.google.com/search?q={quote_plus(query)}&start={offset * 10}&num=10"
@@ -71,65 +69,63 @@ class GoogleScraper:
         headers["Accept-Language"] = "en-US,en;q=0.9"
 
         try:
-            async with session.get(url, headers=headers, allow_redirects=True) as resp:
-                if resp.status != 200:
-                    return []
-                html = await resp.text()
-                soup = BeautifulSoup(html, "html.parser")
-                urls = []
-                for a in soup.select("div.yuRUbf a, div.r a, h3.r a, .tF2Cxc a"):
-                    href = a.get("href", "")
-                    if href.startswith("http") and "google.com" not in href:
-                        urls.append(href)
-                return list(dict.fromkeys(urls))[:10]
+            resp = session.get(url, headers=headers, allow_redirects=True, timeout=20)
+            if resp.status_code != 200:
+                return []
+            soup = BeautifulSoup(resp.text, "html.parser")
+            urls = []
+            for a in soup.select("div.yuRUbf a, div.r a, h3.r a, .tF2Cxc a"):
+                href = a.get("href", "")
+                if href.startswith("http") and "google.com" not in href:
+                    urls.append(href)
+            return list(dict.fromkeys(urls))[:10]
         except Exception:
             return []
 
-    async def _scrape_page(self, session, url: str, niche: str, country: str, location: str, include_social: bool) -> dict:
+    def _scrape_page(self, session, url: str, niche: str, country: str, location: str, include_social: bool) -> dict:
         """Visit a URL and extract lead data."""
         import random
         headers = random.choice(HEADERS_LIST)
         try:
-            async with session.get(url, headers=headers, allow_redirects=True, timeout=aiohttp.ClientTimeout(total=12)) as resp:
-                if resp.status != 200:
-                    return {}
-                html = await resp.text()
-                soup = BeautifulSoup(html, "html.parser")
+            resp = session.get(url, headers=headers, allow_redirects=True, timeout=12)
+            if resp.status_code != 200:
+                return {}
+            soup = BeautifulSoup(resp.text, "html.parser")
 
-                contacts = extract_contacts(html, soup, url, include_social)
+            contacts = extract_contacts(resp.text, soup, url, include_social)
 
-                # Get business name from title or OG tags
-                title = ""
-                og_title = soup.find("meta", property="og:title")
-                if og_title:
-                    title = og_title.get("content", "")
-                if not title:
-                    t = soup.find("title")
-                    title = t.get_text(strip=True) if t else ""
-                # Clean title
-                title = re.sub(r"\s*[-|–|·].*$", "", title).strip()
-                title = title[:80] if title else ""
+            # Get business name from title or OG tags
+            title = ""
+            og_title = soup.find("meta", property="og:title")
+            if og_title:
+                title = og_title.get("content", "")
+            if not title:
+                t = soup.find("title")
+                title = t.get_text(strip=True) if t else ""
+            # Clean title
+            title = re.sub(r"\s*[-|–|·].*$", "", title).strip()
+            title = title[:80] if title else ""
 
-                if not title and not contacts.get("email") and not contacts.get("phone"):
-                    return {}
+            if not title and not contacts.get("email") and not contacts.get("phone"):
+                return {}
 
-                lead = {
-                    "business_name": title,
-                    "owner_name": contacts.get("owner_name", ""),
-                    "email": contacts.get("email", ""),
-                    "phone": contacts.get("phone", ""),
-                    "website": url,
-                    "address": contacts.get("address", ""),
-                    "city": location or contacts.get("city", ""),
-                    "state": contacts.get("state", ""),
-                    "country": country or contacts.get("country", ""),
-                    "facebook": contacts.get("facebook", "") if include_social else "",
-                    "instagram": contacts.get("instagram", "") if include_social else "",
-                    "linkedin": contacts.get("linkedin", "") if include_social else "",
-                    "twitter": contacts.get("twitter", "") if include_social else "",
-                    "source": "Google",
-                }
-                return lead
+            lead = {
+                "business_name": title,
+                "owner_name": contacts.get("owner_name", ""),
+                "email": contacts.get("email", ""),
+                "phone": contacts.get("phone", ""),
+                "website": url,
+                "address": contacts.get("address", ""),
+                "city": location or contacts.get("city", ""),
+                "state": contacts.get("state", ""),
+                "country": country or contacts.get("country", ""),
+                "facebook": contacts.get("facebook", "") if include_social else "",
+                "instagram": contacts.get("instagram", "") if include_social else "",
+                "linkedin": contacts.get("linkedin", "") if include_social else "",
+                "twitter": contacts.get("twitter", "") if include_social else "",
+                "source": "Google",
+            }
+            return lead
         except Exception as e:
             logger.debug(f"Page scrape failed {url}: {e}")
             return {}
